@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+  <AddIn Type="DBApplication">
+    <Name>DWGExporter</Name>
+    <FullClassName>Autodesk.Forge.DWGExporter.MainApp</FullClassName>
+    <Text>DWGExporter</Text>
+    <Description>Export Revit Sheets to DWG</Description>
+    <VisibilityMode>AlwaysVisible</VisibilityMode>
+    <Assembly>.\DWGExporter.dll</Assembly>
+    <AddInId>726567C5-7BF9-4821-A2F1-CA918FAA01E7</AddInId>
+    <VendorId>ADSK</VendorId>
+    <VendorDescription>Autodesk, Inc, www.autodesk.com</VendorDescription>
+  </AddIn>
+</RevitAddIns>
