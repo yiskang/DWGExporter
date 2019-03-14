@@ -19,6 +19,9 @@
 // (1)(ii)(Rights in Technical Data and Computer Software), as
 // applicable.
 //
+// Revit DWGExporter
+// by Eason Kang - Autodesk Forge & Autodesk Developer Network (ADN)
+//
 
 using System;
 using System.IO;
@@ -79,7 +82,13 @@ namespace Autodesk.Forge.DWGExporter
             {
                 LogTrace("Collecting sheets...");
 
+#if CLOUD
+                var exportPath = Directory.GetCurrentDirectory();
+#else
                 var exportPath = Path.GetDirectoryName(modelPath);
+#endif
+                LogTrace(string.Format("Export Path: {0}", exportPath));
+
                 var sheetIds = collector.WhereElementIsNotElementType()
                                         .OfClass(typeof(ViewSheet))
                                         .ToElementIds();
@@ -109,13 +118,15 @@ namespace Autodesk.Forge.DWGExporter
                     }
                     catch (Exception ex)
                     {
-                        if (trans.HasStarted() == true)
-                            trans.RollBack();
-
                         LogTrace("Error occured");
                         LogTrace(ex.Message);
                         LogTrace(ex.InnerException.Message);
                         return false;
+                    }
+                    finally
+                    {
+                        if (trans.HasStarted() == true)
+                            trans.RollBack();
                     }
                 }
             }
