@@ -93,6 +93,12 @@ namespace Autodesk.Forge.DWGExporter
                                         .OfClass(typeof(ViewSheet))
                                         .ToElementIds();
 
+                if (sheetIds == null || sheetIds.Count <= 0)
+                {
+                    LogTrace("No sheets to be exported...");
+                    return false;
+                }
+
                 using (var trans = new Transaction(doc, "Export DWG"))
                 {
                     LogTrace("Starting the export task...");
