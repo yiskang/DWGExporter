@@ -82,11 +82,25 @@ namespace Autodesk.Forge.DWGExporter
             {
                 LogTrace("Collecting sheets...");
 
-#if CLOUD
-                var exportPath = Directory.GetCurrentDirectory();
-#else
-                var exportPath = Path.GetDirectoryName(modelPath);
-#endif
+//#if CLOUD
+//                var exportPath = Path.Combine(Directory.GetCurrentDirectory(), "exported");
+//#else
+//                var exportPath = Path.Combine(Path.GetDirectoryName(modelPath), "exported");
+//#endif
+                var exportPath = Path.Combine(Directory.GetCurrentDirectory(), "exported");
+                if(!Directory.Exists(exportPath))
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(exportPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        this.PrintError(ex);
+                        return false;
+                    }
+                }
+
                 LogTrace(string.Format("Export Path: {0}", exportPath));
 
                 var sheetIds = collector.WhereElementIsNotElementType()
@@ -122,11 +136,24 @@ namespace Autodesk.Forge.DWGExporter
                             doc.Export(exportPath, "DA4R", sheetIds, exportOpts);
                         }
                     }
+                    catch (Autodesk.Revit.Exceptions.InvalidPathArgumentException ex)
+                    {
+                        this.PrintError(ex);
+                        return false;
+                    }
+                    catch (Autodesk.Revit.Exceptions.ArgumentException ex)
+                    {
+                        this.PrintError(ex);
+                        return false;
+                    }
+                    catch (Autodesk.Revit.Exceptions.InvalidOperationException ex)
+                    {
+                        this.PrintError(ex);
+                        return false;
+                    }
                     catch (Exception ex)
                     {
-                        LogTrace("Error occured");
-                        LogTrace(ex.Message);
-                        LogTrace(ex.InnerException.Message);
+                        this.PrintError(ex);
                         return false;
                     }
                     finally
@@ -138,6 +165,13 @@ namespace Autodesk.Forge.DWGExporter
             }
 
             return true;
+        }
+
+        private void PrintError(Exception ex)
+        {
+            LogTrace("Error occured");
+            LogTrace(ex.Message);
+            LogTrace(ex.InnerException.Message);
         }
 
         /// <summary>
